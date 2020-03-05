@@ -3,13 +3,22 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "next",
     "build": "next build",
     "start": "next start"
   },
   "dependencies": {
+    "dotenv": "^8.2.0",
     "next": "9.2.2",
     "react": "16.13.0",
-    "react-dom": "16.13.0"
+    "react-dom": "16.13.0",
+    "reactstrap": "^8.4.1"
+  },
+  "devDependencies": {
+    "@types/node": "^13.7.7",
+    "@types/react": "^16.9.23",
+    "socket.io": "^2.3.0",
+    "socket.io-client": "^2.3.0",
+    "typescript": "^3.8.3"
   }
 }
