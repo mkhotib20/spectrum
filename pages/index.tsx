@@ -1,6 +1,7 @@
 import Head from 'next/head'
 import { Component } from 'react'
-import Users from '../models/Users'
+// import Users from '../models/Users'
+// import Users from '~/'
 import socketIOClient from "socket.io-client";
 const socket = socketIOClient(process.env.BACKEND_URL, {
     transports: ['websocket'],
