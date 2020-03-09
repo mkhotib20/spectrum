@@ -1,6 +1,6 @@
 import { Component } from "react";
 import SidebarItem from "./SidebarItem";
-import { Home, Plus, MessageCircle } from "react-feather";
+import { Home, Plus, MessageCircle, Box } from "react-feather";
 
 class Sidebar extends Component
 {
@@ -19,13 +19,17 @@ class Sidebar extends Component
                 // child: [1,2,3]
             },
             {
-                label: "About",
+                label: "Component",
                 url: "#",
-                icon: Plus,
+                icon: Box,
                 child: [
                     {
-                        label: "Home",
-                        url: "#",
+                        label: "Tables",
+                        url: "/table",
+                    },
+                    {
+                        label: "Form Input",
+                        url: "/form-input",
                     },
                 ]
             }

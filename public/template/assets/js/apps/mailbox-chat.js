@@ -1,3 +1,6 @@
+import Jquery from 'jquery'
+let $ = Jquery
+
 $('.search > input').on('keyup', function() {
   var rex = new RegExp($(this).val(), 'i');
     $('.people .person').hide();

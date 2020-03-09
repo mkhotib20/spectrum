@@ -1,13 +1,28 @@
 import { Component } from "react";
-import { Layout } from "~/components";
+import { 
+    Layout, Chat
+ } from "~/components";
+ import { Members } from '~/fetcher'
 
-class Chat extends Component {
+class ChantPage extends Component {
+    
+    async componentDidMount(){
+        let msg = await Members.get()
+        if (!msg) {
+            console.log(Members.getErrors());
+            return false
+        }
+        
+        
+    }
     render() {
         return (
             <Layout>
-                <p className="red">Hello</p>
+                <div className="container-fluid">
+                    <Chat/>
+                </div>
             </Layout>
         )
     }
 }
-export default Chat
+export default ChantPage

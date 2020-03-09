@@ -1,5 +1,5 @@
 import { Component } from "react";
-import { Layout } from "~/components";
+import { Layout, Tables, Card } from "~/components";
 import socketIOClient from "socket.io-client";
 
 // const endpoint = "http://localhost:1000/"
@@ -8,14 +8,12 @@ import socketIOClient from "socket.io-client";
 // });
 
 class Index extends Component {
-    componentDidMount(){
-        // socket.emit("join", 20)
-    }
     render() {
         return (
             <Layout>
                 <div className="container-fluid">
-                    <p>Hello World</p>
+                    <Card>
+                    </Card>
                 </div>
             </Layout>
         )

@@ -9,6 +9,51 @@ $redColor: #D52322;
 .dropdown-toggle{
   cursor: pointer;
 }
+.chat-system{
+  .bubble{
+    &.you{
+      .chat-indicator{
+        display: none;
+      }
+    } 
+    &.me{
+      &:before{
+        background-color: $blueColor!important;  
+      }
+      background-color: $blueColor!important;
+      padding-right: 10px!important;
+      .chat-indicator{
+        svg{
+          height: 12px;
+        }
+      }
+    } 
+
+  }
+  ::-webkit-scrollbar {
+    width: 10px!important;
+    // border-radius: 23px;
+  }
+  
+  /* Track */
+  ::-webkit-scrollbar-track {
+    background: #f1f1f1; 
+  }
+   
+  /* Handle */
+  ::-webkit-scrollbar-thumb {
+    background: rgb(207, 207, 207); 
+  }
+  
+  /* Handle on hover */
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgb(177, 177, 177); 
+  }
+  .chat-conversation-box{
+    overflow-y: scroll!important;
+  }
+
+}
 @media(max-device-width: 992px){
     #nprogress .spinner {
         display: block;
@@ -36,7 +81,8 @@ $redColor: #D52322;
         width: 100px;
         padding: 8px 0 8px 0;
         text-align: center;
-        background-color: #dbdbdb62;
+        opacity: 1!important;
+        background-color: rgba(255, 255, 255, 0.815);
         &:before{
             content: "Loading";
             text-align: center;
