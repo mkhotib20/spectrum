@@ -1,35 +1,41 @@
 import { Component } from "react";
-import { Layout, Tables, Card } from "~/components";
-import { Antrian, Project } from '~/fetcher'
+import { Layout, Tables, Card, Form } from "~/components"
 
 class Index extends Component {
     state = {
-        data: []
+        isLoading: true, 
+        data: [],
+        formAttr: {
+            nama_lengkap: '',
+            alamat: '',
+            pekerjaan_sekarang: "",
+            usia: "",
+            status_pernikahan: '',
+        }
     }
     async componentDidMount(){
-        let model = Antrian
-        let getData = await model.get()
-        if (!getData) {
-            console.log(model.getErrors());
-            return false
-        }
-        let tmp = model.getData().map(val => {
-            return {
-                nama: val.nama, 
-                id: val.id,
-                posisi: val.posisi
-            }
-        })
-        this.setState({
-            data: tmp
-        })
+
     }
     render() {
         return (
             <Layout>
                 <div className="container-fluid">
-                    <Card>
-                        <Tables data={this.state.data} />
+                    <Card title="Input">
+                        <Form 
+                            attributes={this.state.formAttr}
+                            usia={[
+                                {value: 1, label: "ana"},
+                                {value: 2, label: "Ani"}
+                            ]}
+                            types={{
+
+                                usia: 'dropdown',
+                                status_pernikahan: "boolean"
+                            }}
+                            onSubmit={(e, value) => {
+                                
+                            }}
+                        />
                     </Card>
                 </div>
             </Layout>
