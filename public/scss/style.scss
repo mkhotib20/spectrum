@@ -14,7 +14,28 @@ $redColor: #D52322;
     background-color: unset!important;
   }
 }
+.form-actions{
+  user-select: none;
+  margin-right: 10px;
+  cursor: pointer;
+  svg{
+    stroke: $mainColor;
+  }
+}
 .pagination{
+  li{
+    padding: 0.4rem 0.75rem;
+    &.disabled{
+      opacity: 0.4;
+      pointer-events: none;
+    }
+    &:hover{
+      background-color: rgb(27, 85, 226);
+      color: white;
+    }
+    cursor: pointer;
+  }
+  user-select: none;
   button{
     background-color: transparent!important;
     outline: none;
@@ -28,6 +49,10 @@ $redColor: #D52322;
       color: white!important;
     }
   }
+}
+.page-indicators{
+  display: table-cell;
+  vertical-align: middle;
 }
 .task-list-container{
   width: 200px!important;

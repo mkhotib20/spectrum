@@ -46,12 +46,12 @@ class FormInput extends Component
         }
         
         await this.validateInput(data)
-
         if (Object.keys(this.state.errors).length>0) {
             nProgress.done()
             return false
         }
         this.props.onSubmit(e, data)
+        this.resetValue()
         nProgress.done()
     }
     serializer = (fd) => {
@@ -68,6 +68,12 @@ class FormInput extends Component
                 attributes[key] = attributes[key]== '' ? 0 : attributes[key] 
             }
             this.refs[key].value = attributes[key]
+        })
+    }
+    resetValue(){
+        let {attributes} = this.props
+        Object.keys(attributes).map(key => {
+            this.refs[key].value = ''
         })
     }
     render() {

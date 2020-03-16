@@ -12,6 +12,26 @@ class Actions
         }
         return this.response.data.errors
     }
+    async getAttributes(useTimeStamp, usePk){
+        
+        try {
+            const {data} = await axios.get(`${this.base_url}/attr`)
+            let attr = data.data
+            if (!useTimeStamp) {
+                attr = attr.filter(val => {
+                    return val!='createdAt' && val!="updatedAt"
+                })
+            }
+            if (!usePk) {
+                attr = attr.filter(val => {
+                    return val!='id'
+                })
+            }
+            return attr
+        } catch (error) {
+            console.log(error)
+        }
+    }
     getRspCode(){
         return this.response.code
     }
@@ -26,10 +46,10 @@ class Actions
     }
     async get(config){        
         try {
-            const {data} = await axios.get(this.base_url, {data: {
+            const {data} = await axios.post(`${this.base_url}/get`, {
                 limit: config ? config.limit : null,
                 offset: config ? config.offset : 0
-            }})
+            })
             this.response = data
             return true
         } catch (error) {

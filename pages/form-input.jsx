@@ -1,20 +1,28 @@
 import { Component } from "react";
 import { Layout, Tables, Card, Form } from "~/components"
+import { Antrian, Project } from '~/fetcher'
+import { FormAttrMaker } from "~/helpers";
 
 class Index extends Component {
     state = {
         isLoading: true, 
         data: [],
-        formAttr: {
-            nama_lengkap: '',
-            alamat: '',
-            pekerjaan_sekarang: "",
-            usia: "",
-            status_pernikahan: '',
-        }
+        formAttr: {}
     }
     async componentDidMount(){
-
+        let attr = await Antrian.getAttributes()
+        console.log(FormAttrMaker(attr));
+        
+        this.setState({
+            formAttr: FormAttrMaker(attr)
+        })
+    }
+    async submitForm(e, value){
+        const insert = await Antrian.insert(value)
+        if (!insert) {
+            alert("Gagal")
+            return false
+        }
     }
     render() {
         return (
@@ -32,9 +40,7 @@ class Index extends Component {
                                 usia: 'dropdown',
                                 status_pernikahan: "boolean"
                             }}
-                            onSubmit={(e, value) => {
-                                console.log(value)
-                            }}
+                            onSubmit={this.submitForm}
                         />
                     </Card>
                 </div>

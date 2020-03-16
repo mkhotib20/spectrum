@@ -1,12 +1,33 @@
 import { Component } from "react";
-import { Edit, ChevronsLeft, ChevronsRight, ChevronLeft, ChevronRight } from "react-feather";
+import { Edit, ChevronsLeft, ChevronsRight, ChevronLeft, ChevronRight, Circle, Edit3, Edit2, Trash2 } from "react-feather";
 import {StringHelpers} from '~/helpers'
+const Icons = ({type, handler}) => {
+    let RenderIcon
+    switch (type) {
+        case 'delete':
+            RenderIcon = Trash2
+            break;
+        case 'update':
+            RenderIcon = Edit
+            break;
+    
+        default:
+            return Circle
+            break;
+    }
+    return(
+        <span onClick={handler} title={StringHelpers.snakeToCamel(type)} className="form-actions">
+            <RenderIcon/>
+        </span>
+    )
+}
 
 class Tables extends Component
 {
     state = {
         primaryKey: 'id',
-        count: []
+        count: [],
+        selected: 0
     }
     componentDidMount(){
         let primaryKey = this.props.primaryKey ? this.props.primaryKey : 'id'
@@ -16,12 +37,19 @@ class Tables extends Component
         
         let counter = []
         for (let i = 0; i < this.props.count; i++) {
-            if (i%5==0) {
+            if (i%this.props.pageSize==0) {
                 counter.push(i)
             }
         }
         this.setState({
             count: counter
+        })
+    }
+    changePage = (nowPage) => {
+        this.setState({
+            selected: nowPage
+        }, ()=>{
+            this.props.changePage(nowPage, this.props.pageSize)
         })
     }
     render() {
@@ -36,8 +64,11 @@ class Tables extends Component
         })
         
         return (
-            <div className="table-responsive">
-                <table className="table table-bordered mb-4">
+            <div>
+            <div style={{
+                height: this.props.pageSize*57.5
+            }} className="table-responsive">
+                <table className="table mb-4">
                     <thead>
                         <tr>
                             <th>#</th>
@@ -54,13 +85,16 @@ class Tables extends Component
                                     <th key={idx}>{StringHelpers.snakeToCamel(val).toUpperCase()}</th>
                                 )
                             })}
+                            {this.props.actions ? (
+                                <th>Action</th>
+                            ): false}
                         </tr>
                     </thead>
                     <tbody>
                         {data.map((val, idx) => {
                             return(
                                 <tr key={idx}>
-                                    <td>{idx+1}</td>
+                                    <td>{(idx+1)+(this.props.pageSize*this.state.selected)}</td>
                                     {headers.map((val2, idx2) => {
                                         if(val2==this.state.primaryKey) return false
                                         if(this.props.template){
@@ -77,22 +111,72 @@ class Tables extends Component
                                             <td key={idx2}>{val[val2]}</td>
                                         )
                                     })}
+                                    {this.props.actions ? (
+                                        <td>
+                                            {this.props.actions.map((val2, idx) => {
+                                                if(this.props.actionTemplate[val2]){
+                                                    let Tmp = this.props.actionTemplate[val2]
+                                                    return <span onClick={()=>{
+                                                            this.props.handler[val2](val.id)
+                                                        }} className="form-actions">
+                                                        <Tmp key={val.id} />
+                                                    </span>
+                                                }
+                                                return(
+                                                    <Icons handler={()=>{
+                                                        this.props.handler[val2](val.id)
+                                                    }} key={idx} type={val2}/>
+                                                )
+                                            })}
+                                        </td>
+                                    ): false}
+
                                 </tr>
                             )
                         })}
                     </tbody>
                 </table>
-                <div className="paginating-container pagination-solid">
-                    <ul className="pagination">
-                        <li className="prev"><button><ChevronLeft/></button></li>
-                            {this.state.count.map((val, idx) => {
-                                return(
-                                    <li key={idx}><button>{idx+1}</button></li>
-                                )
-                            })}
-                        <li className="next"><button><ChevronRight/></button></li>
-                    </ul>
+            </div>
+            <div className="row">
+                <div className="col-md-3">
+                    <small className="page-indicators">Showing {
+                        (this.state.selected+1)*(this.props.pageSize) > 
+                        this.props.count ? this.props.count : 
+                        (this.state.selected+1)*(this.props.pageSize)
+                    } of {this.props.count} data </small>
                 </div>
+                <div className="col-md-9">
+                    <div className="paginating-container pagination-solid float-right">
+                        <ul className="pagination">
+                            <li onClick={()=>{
+                                let {selected} = this.state
+                                if(selected==0){
+                                    return false
+                                }
+                                selected--
+                                this.changePage(selected)
+                            }} className={this.state.selected==0 ? 'prev disabled' : 'prev'}><span ><ChevronLeft/></span></li>
+                                {this.state.count.map((val, idx) => {
+                                    let page = idx+1
+                                    let isActive = idx==this.state.selected ? 'active' : null
+                                    return(
+                                        <li onClick={()=>{
+                                            this.changePage(idx)
+                                        }} className={isActive} key={idx}><span>{page}</span></li>
+                                    )
+                                })}
+                            <li onClick={()=>{
+                                let {selected, count} = this.state
+                                selected++
+                                if(selected==count.length){
+                                    return false
+                                }
+                                this.changePage(selected)
+                            }} className={this.state.selected==this.state.count.length-1 ? 'next disabled' : 'next'}><span><ChevronRight/></span></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
             </div>
         )
     }
