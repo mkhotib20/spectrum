@@ -60,7 +60,7 @@ class Table extends Component {
                                     }
                                 }}
                                 pageSize={this.state.pageSize} 
-                                count={this.state.count} changePage={this.getData} 
+                                count={this.state.count} getData={this.getData} 
                                 data={this.state.data} 
                                 actions={['delete', 'update']}
                                 

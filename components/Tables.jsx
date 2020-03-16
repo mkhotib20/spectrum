@@ -45,11 +45,11 @@ class Tables extends Component
             count: counter
         })
     }
-    changePage = (nowPage) => {
+    getData = (nowPage) => {
         this.setState({
             selected: nowPage
         }, ()=>{
-            this.props.changePage(nowPage, this.props.pageSize)
+            this.props.getData(nowPage, this.props.pageSize)
         })
     }
     render() {
@@ -162,14 +162,14 @@ class Tables extends Component
                                     return false
                                 }
                                 selected--
-                                this.changePage(selected)
+                                this.getData(selected)
                             }} className={this.state.selected==0 ? 'prev disabled' : 'prev'}><span ><ChevronLeft/></span></li>
                                 {this.state.count.map((val, idx) => {
                                     let page = idx+1
                                     let isActive = idx==this.state.selected ? 'active' : null
                                     return(
                                         <li onClick={()=>{
-                                            this.changePage(idx)
+                                            this.getData(idx)
                                         }} className={isActive} key={idx}><span>{page}</span></li>
                                     )
                                 })}
@@ -179,7 +179,7 @@ class Tables extends Component
                                 if(selected==count.length){
                                     return false
                                 }
-                                this.changePage(selected)
+                                this.getData(selected)
                             }} className={this.state.selected==this.state.count.length-1 ? 'next disabled' : 'next'}><span><ChevronRight/></span></li>
                         </ul>
                     </div>
