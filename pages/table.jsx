@@ -6,16 +6,17 @@ import Skeleton from 'react-loading-skeleton'
 class Table extends Component {
     state = {
         isLoading: true, 
-        data: []
+        data: [],
+        count: 0,
     }
     async componentDidMount(){
         let model = Antrian
-        let getData = await model.get()
+        let getData = await model.get({limit: 5, offset: 0})
         if (!getData) {
             console.log(model.getErrors());
             return false
-        }
-        let tmp = model.getData().map(val => {
+        }        
+        let tmp = model.getData(true).map(val => {
             return {
                 nama: val.nama, 
                 id: val.id,
@@ -23,6 +24,7 @@ class Table extends Component {
             }
         })
         this.setState({
+            count: model.getCount(),
             data: tmp,
             isLoading: false, 
         })
@@ -35,7 +37,7 @@ class Table extends Component {
                         {this.state.isLoading ? (
                             <Skeleton count={10} />
                         ) : (
-                            <Tables data={this.state.data} />
+                            <Tables count={this.state.count} data={this.state.data} />
                         )}
                     </Card>
                 </div>

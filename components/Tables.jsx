@@ -5,12 +5,23 @@ import {StringHelpers} from '~/helpers'
 class Tables extends Component
 {
     state = {
-        primaryKey: 'id'
+        primaryKey: 'id',
+        count: []
     }
     componentDidMount(){
         let primaryKey = this.props.primaryKey ? this.props.primaryKey : 'id'
         this.setState({
             primaryKey: primaryKey
+        })
+        
+        let counter = []
+        for (let i = 0; i < this.props.count; i++) {
+            if (i%5==0) {
+                counter.push(i)
+            }
+        }
+        this.setState({
+            count: counter
         })
     }
     render() {
@@ -73,11 +84,13 @@ class Tables extends Component
                 </table>
                 <div className="paginating-container pagination-solid">
                     <ul className="pagination">
-                        <li className="prev"><a href="javascript:void(0);"><ChevronLeft/></a></li>
-                        <li><a href="javascript:void(0);">1</a></li>
-                        <li><a href="javascript:void(0);">2</a></li>
-                        <li><a href="javascript:void(0);">3</a></li>
-                        <li className="next"><a href="javascript:void(0);"><ChevronRight/></a></li>
+                        <li className="prev"><button><ChevronLeft/></button></li>
+                            {this.state.count.map((val, idx) => {
+                                return(
+                                    <li key={idx}><button>{idx+1}</button></li>
+                                )
+                            })}
+                        <li className="next"><button><ChevronRight/></button></li>
                     </ul>
                 </div>
             </div>

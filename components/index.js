@@ -6,3 +6,5 @@ export { default as Chat } from "./chat/Wrapper";
 export { default as Form } from "./Form";
 export { default as InputField } from "./InputField";
 export { default as Button } from "./Button";
+export { default as ScrumBoard } from "./scrumboard/Wrapper";
+export { default as LoginLayout } from "./LoginLayout";

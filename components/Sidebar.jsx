@@ -31,6 +31,10 @@ class Sidebar extends Component
                         label: "Form Input",
                         url: "/form-input",
                     },
+                    // {
+                    //     label: "Scrum Board",
+                    //     url: "/scrumboard",
+                    // },
                 ]
             }
         ]

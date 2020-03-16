@@ -10,6 +10,7 @@ import '@static/template/assets/css/apps/scrumboard.css'
 import '@static/scss/style.scss'
 import '@static/template/assets/js/libs/jquery-3.1.1.min.js'
 import '@static/template/bootstrap/js/popper.min.js'
+import '@static/template/assets/css/authentication/form-2.css'
 // import '@static/template/bootstrap/js/bootstrap.min.js'
 import Wrapper from './Wrapper'
 import Router from 'next/router'
@@ -31,8 +32,7 @@ class Layout extends React.Component
     
   }
   componentDidMount(){
-    // NProgress.start()
-    MainJs.init()
+      
   }
   
     render() {
@@ -53,10 +53,7 @@ class Layout extends React.Component
                 integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
                 crossOrigin="anonymous"></script>
             </Head>
-            <Navbar/>
-            <Wrapper>
-              {this.props.children}
-            </Wrapper>
+            {this.props.children}
         </div>
       );
     }

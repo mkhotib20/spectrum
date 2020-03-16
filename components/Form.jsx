@@ -36,8 +36,8 @@ class FormInput extends Component
         })
     }
     submit = async(e)=>{
-        nProgress.start()
         e.preventDefault()
+        nProgress.start()
         let formData = new FormData(e.target)
         let data = formData
         

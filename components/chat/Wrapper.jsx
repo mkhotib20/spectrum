@@ -10,28 +10,9 @@ import nProgress from "nprogress";
 class Wrapper extends Component
 {
     lastChat = []
-    chatInput = React.createRef()
     state={
-        chatSelected: null,
-        persons: [
-            {
-                name: "Mbak Cantik",
-                img: "mbak-cantik.jpg",
-                chats: [
-                    {content: "Hello", incoming: false},
-                    {content: "Hai juga", incoming: false},
-                ]
-            },
-            {
-                name: "Siscaee",
-                img: "mbak-cantik.jpg",
-                chats: [
-                    {content: "Halo bang ojol", incoming: true},
-                    {content: "Hai juga", incoming: false},
-                    {content: "Halo bang ojol", incoming: true}
-                ]
-            }
-        ]
+        isFirst: true, 
+        persons: []
     }
     render() {
         return (
@@ -45,46 +26,28 @@ class Wrapper extends Component
                         <input type="text" className="form-control" placeholder="Search" />
                     </div>
                     <div className="people">
-                        {this.state.persons.map((val, idx) => {
-                            let lastChat = val.chats[val.chats.length-1]
+                        {this.props.persons.map((val, idx) => {
+                            let lastChat = val.chats.length>0 ? val.chats[val.chats.length-1] : {content: '-'}
                             return(
                                 <Person key={idx} img={val.img} name={val.name} onClick={()=>{
-                                    nProgress.start()
-                                    this.setState({
-                                        chatSelected: idx
-                                    }, () => {
-                                        setTimeout(()=>{
-                                            this.chatInput.current.focus()
-                                            nProgress.done()
-                                        }, 200)
-                                    })
+                                    this.setState({isFirst: true})
+                                    this.props.selectPerson(idx, val.id)
                                 }} last_chat={lastChat.content}/>
                             )
                         })}
                     </div>
                 </div>
                 <div className="chat-box">
-                    {this.state.chatSelected == null ? (
+                    {this.props.personSelected == null ? (
                         <div className="chat-not-selected">
                             <p> <MessageCircle/> Click User To Chat</p>
                         </div>
                     ) : (
-                        <InnerBox last_chat={this.lastChat} sendChat={(e)=>{
-                            e.preventDefault() 
-                            let formData = new FormData(e.target)
-                            let chatInput = formData.get("chatInput")
-                            if(chatInput=='') return false
-                            let {chats, persons, chatSelected} = this.state
-                            persons[chatSelected].chats.push({
-                                content: chatInput,
-                                incoming: false
-                            })
-                            this.setState({
-                                persons: persons
-                            }, () => {
-                                this.chatInput.current.value = ""
-                            })
-                        }} data={this.state.persons[this.state.chatSelected]} ref={this.chatInput}/>
+                        <InnerBox isFirst={this.state.isFirst} last_chat={this.lastChat} sendChat={(e)=>{
+                            this.setState({isFirst: false})
+                            this.props.sendChat(e)
+                        }} 
+                        data={this.props.personSelected} ref={this.props.innerRef}/>
                     )}                    
                 </div>
             </div>
@@ -92,4 +55,6 @@ class Wrapper extends Component
     }
 }
 
-export default Wrapper
+export default React.forwardRef((props, ref) => <Wrapper 
+    innerRef={ref} {...props}
+/>);

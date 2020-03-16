@@ -15,16 +15,25 @@ class Actions
     getRspCode(){
         return this.response.code
     }
-    getData(){
+    getCount(){
+        return this.response.data.count ? this.response.data.count : null
+    }
+    getData(withCount){
+        if (withCount) {
+            return this.response.data.rows
+        }
         return this.response.data
     }
-    async get(){
+    async get(config){        
         try {
-            const {data} = await axios.get(this.base_url)
+            const {data} = await axios.get(this.base_url, {data: {
+                limit: config ? config.limit : null,
+                offset: config ? config.offset : 0
+            }})
             this.response = data
             return true
         } catch (error) {
-            let rsp = error.response.data
+            let rsp = error.response.data || error
             this.response = rsp
             return false
         }

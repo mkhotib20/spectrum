@@ -5,15 +5,19 @@ export default React.forwardRef((props, ref) => {
     const last_chat = []
     const [isFirst, setIsFirst]  = useState(true)
     useEffect(() => {
-        let lc = last_chat[props.data.chats.length-1]
-        let options = {}
-        if(!isFirst){
-            options = {
-                behavior: "smooth",
-                block: 'start',
+        if (last_chat.length>0) {
+            let lc = last_chat[props.data.chats.length-1]
+            let options = {
+                block: 'start'
             }
+            if(!props.isFirst){
+                options = {
+                    behavior: "smooth",
+                    block: 'start',
+                }
+            }
+            lc.scrollIntoView(options);            
         }
-        lc.scrollIntoView(options);
     })
     return(
         <div className="chat-box-inner" style={{
@@ -41,7 +45,9 @@ export default React.forwardRef((props, ref) => {
                             return(
                                 <div key={idx} ref={(e)=> last_chat[idx] = e} className={val.incoming ? 'bubble you' : 'bubble me'}>
                                     <span>{val.content}</span>
-                                    <span className="chat-indicator"><Check/> </span>
+                                    <span className="chat-indicator float-right">
+                                        {val.isSent ? <Check/> : <Clock/>}
+                                    </span>
                                 </div>
                             )
                         })}

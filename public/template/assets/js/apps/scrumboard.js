@@ -1,3 +1,6 @@
+import Jquery from 'jquery'
+import PerfectScrollbar from '@static/template/plugins/perfect-scrollbar/perfect-scrollbar.min.js'
+let $ = Jquery
 $(function() {
 
     /*

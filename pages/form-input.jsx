@@ -33,7 +33,7 @@ class Index extends Component {
                                 status_pernikahan: "boolean"
                             }}
                             onSubmit={(e, value) => {
-                                
+                                console.log(value)
                             }}
                         />
                     </Card>
