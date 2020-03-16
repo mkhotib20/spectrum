@@ -9,7 +9,7 @@ class Table extends Component {
         isLoading: true, 
         data: [],
         count: 0,
-        pageSize: 9
+        pageSize: 8
     }
     async componentDidMount(){
         await this.getData(0, this.state.pageSize)
@@ -63,13 +63,7 @@ class Table extends Component {
                                 count={this.state.count} changePage={this.getData} 
                                 data={this.state.data} 
                                 actions={['delete', 'update']}
-                                actionTemplate={{
-                                    delete: (props) => {
-                                        return(
-                                            <span>Hapus</span>
-                                        )
-                                    }
-                                }}
+                                
                             />
                         )}
                     </Card>

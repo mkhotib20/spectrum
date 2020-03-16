@@ -66,12 +66,14 @@ class Tables extends Component
         return (
             <div>
             <div style={{
-                height: this.props.pageSize*57.5
+                height: this.props.pageSize*58
             }} className="table-responsive">
-                <table className="table mb-4">
+                <table className="table table-hover table-bordered mb-4">
                     <thead>
                         <tr>
-                            <th>#</th>
+                            <th style={{
+                                width: 30
+                            }}>#</th>
                             {headers.map((val, idx) => {
                                 if(val==this.state.primaryKey) return false
                                 if(this.props.headerAs){
@@ -94,7 +96,9 @@ class Tables extends Component
                         {data.map((val, idx) => {
                             return(
                                 <tr key={idx}>
-                                    <td>{(idx+1)+(this.props.pageSize*this.state.selected)}</td>
+                                    <td style={{
+                                        width: 50, textAlign: 'center'
+                                    }}>{(idx+1)+(this.props.pageSize*this.state.selected)}</td>
                                     {headers.map((val2, idx2) => {
                                         if(val2==this.state.primaryKey) return false
                                         if(this.props.template){
@@ -112,15 +116,19 @@ class Tables extends Component
                                         )
                                     })}
                                     {this.props.actions ? (
-                                        <td>
+                                        <td style={{
+                                            width: 80*this.props.actions.length
+                                        }} >
                                             {this.props.actions.map((val2, idx) => {
-                                                if(this.props.actionTemplate[val2]){
-                                                    let Tmp = this.props.actionTemplate[val2]
-                                                    return <span onClick={()=>{
-                                                            this.props.handler[val2](val.id)
-                                                        }} className="form-actions">
-                                                        <Tmp key={val.id} />
-                                                    </span>
+                                                if(this.props.actionTemplate){
+                                                    if(this.props.actionTemplate[val2]){
+                                                        let Tmp = this.props.actionTemplate[val2]
+                                                        return <span onClick={()=>{
+                                                                this.props.handler[val2](val.id)
+                                                            }} className="form-actions">
+                                                            <Tmp key={val.id} />
+                                                        </span>
+                                                    }
                                                 }
                                                 return(
                                                     <Icons handler={()=>{
