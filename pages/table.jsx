@@ -42,6 +42,13 @@ class Table extends Component {
             nProgress.done()
         })
     }
+     changeView = async(e)=>{        
+        let pageSize = parseInt(e.target.value)
+        this.setState({pageSize: pageSize, isLoading: true}, async()=>{
+            await this.getData(0, pageSize)
+        })
+        
+    }
     render() {
         return (
             <Layout>
@@ -59,6 +66,7 @@ class Table extends Component {
                                         alert(id)
                                     }
                                 }}
+                                changeView={this.changeView}
                                 pageSize={this.state.pageSize} 
                                 count={this.state.count} getData={this.getData} 
                                 data={this.state.data} 

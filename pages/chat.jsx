@@ -104,7 +104,7 @@ class ChantPage extends Component
                     res(data)
                 })
             } catch (error) {
-                rej(new Error(error))
+                rej(error)
             }
         })
     }
@@ -113,24 +113,29 @@ class ChantPage extends Component
         let {user_data} = this.props
         let {persons} = this.state
         let _room = `${user_data.id}||||${id}`
-        let chatData = await this.joinRoom(_room)
-        persons[idx].chats = chatData.map(val => {
-            return {
-                content: val.message,
-                incoming: user_data.id!=val.user_id_sender,
-                isSent: true
-            }
-        })
-        this.setState({
-            persons: persons,
-            room: _room,
-            personSelected: persons[idx], 
-        }, () => {
-            setTimeout(()=>{
-                this.chatInput.current.focus()
-                nProgress.done()
-            }, 200)
-        })
+        try {
+            let chatData = await this.joinRoom(_room)
+            persons[idx].chats = chatData.map(val => {
+                return {
+                    content: val.message,
+                    incoming: user_data.id!=val.user_id_sender,
+                    isSent: true
+                }
+            })
+            this.setState({
+                persons: persons,
+                room: _room,
+                personSelected: persons[idx], 
+            }, () => {
+                setTimeout(()=>{
+                    this.chatInput.current.focus()
+                    nProgress.done()
+                }, 200)
+            })
+        } catch (error) {
+            console.log(error);
+            
+        }
     }
     render() {
         return (

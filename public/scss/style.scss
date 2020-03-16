@@ -14,6 +14,16 @@ $redColor: #D52322;
     background-color: unset!important;
   }
 }
+.table-container{
+  min-height: 500px;
+  position: relative;
+  .table-pagination{
+    width: 100%;
+    position: absolute;
+    bottom: 0;
+  }
+
+}
 .form-actions{
   user-select: none;
   margin-right: 10px;
