@@ -1,6 +1,6 @@
 import { Component } from "react";
 import { Edit, ChevronsLeft, ChevronsRight, ChevronLeft, ChevronRight, Circle, Edit3, Edit2, Trash2 } from "react-feather";
-import {StringHelpers} from '~/helpers'
+import {StringHelpers, DropdownMaker} from '~/helpers'
 const Icons = ({type, handler}) => {
     let RenderIcon
     switch (type) {
@@ -25,58 +25,172 @@ const Icons = ({type, handler}) => {
 class Tables extends Component
 {
     state = {
+        pageSize: 8,
+        selectedFilter: {
+            orderBy: 'createdAt',
+            type:'DESC'
+        },
         rowHeight: 49,
         primaryKey: 'id',
-        count: [],
-        selected: 0
+        pages: [],
+        selected: 0,
+        filterType: [],
+        headers: [],
+        data: []
     }
-    componentDidMount(){
-        let primaryKey = this.props.primaryKey ? this.props.primaryKey : 'id'
-        this.setState({
-            primaryKey: primaryKey
-        })
+    changeOrder = (e, label) => {
+        let {selectedFilter} = this.state
         
-        let counter = []
-        for (let i = 0; i < this.props.count; i++) {
-            if (i%this.props.pageSize==0) {
-                counter.push(i)
-            }
-        }
+        selectedFilter[label] = e.target.value
+        
         this.setState({
-            count: counter
+            selectedFilter: selectedFilter
+        }, async()=>{
+            try {
+                const {data} = await this.getData()
+                this.setState({
+                    data: data
+                })
+            } catch (error) {
+                
+            }
         })
     }
-    getData = (nowPage) => {
+    
+    getData = async()=>{
+        return new Promise(async(res, rej) => {
+            let idx = this.state.selected
+            let pageSize = this.state.pageSize
+            let limit = pageSize
+            let offset = idx*pageSize
+            let model = this.props.model
+            let order = Object.keys(this.state.selectedFilter).length>0 ? this.state.selectedFilter : null
+            
+
+            let getData = await model.get({limit: limit, offset: offset, order: order})
+            if (!getData) {
+                console.log(model.getErrors());
+                rej(false)
+                return false
+            }        
+            let tmp = model.getData(true).map(val => {
+                return {
+                    nama: val.nama, 
+                    id: val.id,
+                    posisi: val.posisi
+                }
+            })
+            res({
+                count: model.getCount(),
+                data: tmp,
+            })
+        })
+    }
+    async componentDidMount(){
+        let primaryKey = this.props.primaryKey ? this.props.primaryKey : 'id'
+        try {
+            let {data,count} = await this.getData()
+            
+            let headers = Object.keys(data[0]).map(key => {
+                return key
+            })
+            let selectedFilter = headers.filter(val => {
+                return val!=primaryKey
+            }).find((val,idx) => {
+                return idx==0
+            })
+            selectedFilter = Object.keys(this.state.selectedFilter).length>0 ? this.state.selectedFilter : {
+                orderBy: selectedFilter,
+                type: 'ASC'
+            }
+            let counter = []
+            for (let i = 0; i < count; i++) {
+                if (i%this.state.pageSize==0) {
+                    counter.push(i)
+                }
+            }
+            this.setState({
+                data: data,
+                pages: counter,
+                headers: headers,
+                filterType: ['ASC', 'DESC'],
+                primaryKey: primaryKey,
+                selectedFilter: selectedFilter
+            })
+        } catch (error) {
+            console.log(error);
+        }
+    }
+    updateData = async (idx) => {
         this.setState({
-            selected: nowPage
-        }, ()=>{
-            this.props.getData(nowPage, this.props.pageSize)
+            selected: idx
+        }, async()=>{
+            try {
+                let {data, count} = await this.getData()
+                this.setState({
+                    data: data
+                })
+            } catch (error) {
+                console.log(error);   
+            }
+        })
+    }
+    changePageSize = (e) => {
+        this.setState({
+            selected: 0,
+            pageSize: parseInt(e.target.value)
+        }, async()=>{
+            try {
+                let {data} = await this.getData()
+                this.setState({data: data})
+            } catch (error) {
+                console.log(error);
+                
+            }
         })
     }
     render() {
-        let {data} = this.props
-        if (!data.length>0) {
-            return (
-                <p>Empty Value</p>
-            )
-        }
-        let headers = Object.keys(data[0]).map(key => {
-            return key
-        })
         
         return (
             <div style={{
-                height: (this.props.pageSize*this.state.rowHeight)+(this.state.rowHeight*3)
+                height: (this.state.pageSize*this.state.rowHeight)+(this.state.rowHeight*3)
             }} className="table-container">
-                <small>Page size</small>
-                <select onChange={this.props.changeView} value={this.props.pageSize}>
-                    <option value="5">5</option>
-                    <option value="8">8</option>
-                    <option value="10">10</option>
-                    <option value="20">20</option>
-                </select>
-                <br/>
-                <br/>
+                <div className="row mb-3">
+                    <div className="col-md-3">
+                        <small>Page size </small>
+                        <select onChange={this.changePageSize} value={this.state.pageSize}>
+                            <option value="5">5</option>
+                            <option value="8">8</option>
+                            <option value="10">10</option>
+                            <option value="20">20</option>
+                        </select>
+                    </div>
+                    <div className="col-md-5">
+                        <small>Urutkan </small>
+                        <select onChange={(e)=>{this.changeOrder(e, 'orderBy')}} value={this.state.selectedFilter.orderBy}>
+                                <option value={'createdAt'}>{'createdAt'}</option>
+                            
+                            {this.state.headers.map((val, idx) => {
+                                if(val==this.state.primaryKey) return false
+                                return(
+                                    <option key={idx} value={val}>{val}</option>
+                                )
+                            })}
+
+                        </select>
+                        <small>  </small>
+                        <select onChange={(e)=>{this.changeOrder(e, 'type')}} value={this.state.selectedFilter.type}>
+                            {this.state.filterType.map((val, idx) => {
+                                return(
+                                    <option key={idx} value={val}>{val}</option>
+                                )
+                            })}
+
+                        </select>
+                    </div>
+                    <div className="col-md-3">
+                    </div>
+                </div>
                 <div className="table-responsive">
                     <table className="table table-hover table-bordered mb-4">
                         <thead>
@@ -84,7 +198,7 @@ class Tables extends Component
                                 <th style={{
                                     width: 30
                                 }}>#</th>
-                                {headers.map((val, idx) => {
+                                {this.state.headers.map((val, idx) => {
                                     if(val==this.state.primaryKey) return false
                                     if(this.props.headerAs){
                                         if(this.props.headerAs.hasOwnProperty(val)){
@@ -103,13 +217,13 @@ class Tables extends Component
                             </tr>
                         </thead>
                         <tbody>
-                            {data.map((val, idx) => {
+                            {this.state.data.map((val, idx) => {
                                 return(
                                     <tr key={idx}>
                                         <td style={{
                                             width: 50, textAlign: 'center'
-                                        }}>{(idx+1)+(this.props.pageSize*this.state.selected)}</td>
-                                        {headers.map((val2, idx2) => {
+                                        }}>{(idx+1)+(this.state.pageSize*this.state.selected)}</td>
+                                        {this.state.headers.map((val2, idx2) => {
                                             if(val2==this.state.primaryKey) return false
                                             if(this.props.template){
                                                 if(this.props.template.hasOwnProperty(val2)){
@@ -159,10 +273,10 @@ class Tables extends Component
                     <div className="row">
                         <div className="col-md-3">
                             <small className="page-indicators">Showing {
-                                (this.state.selected+1)*(this.props.pageSize) > 
-                                this.props.count ? this.props.count : 
-                                (this.state.selected+1)*(this.props.pageSize)
-                            } of {this.props.count} data </small>
+                                (this.state.selected+1)*(this.state.pageSize) > 
+                                this.state.pages ? this.state.pages : 
+                                (this.state.selected+1)*(this.state.pageSize)
+                            } of {this.state.pages} data </small>
                         </div>
                         <div className="col-md-9">
                             <div className="paginating-container pagination-solid float-right">
@@ -173,14 +287,14 @@ class Tables extends Component
                                             return false
                                         }
                                         selected--
-                                        this.getData(selected)
+                                        this.updateData(selected)
                                     }} className={this.state.selected==0 ? 'prev disabled' : 'prev'}><span ><ChevronLeft/></span></li>
-                                        {this.state.count.map((val, idx) => {
+                                        {this.state.pages.map((val, idx) => {
                                             let page = idx+1
                                             let isActive = idx==this.state.selected ? 'active' : null
                                             return(
                                                 <li onClick={()=>{
-                                                    this.getData(idx)
+                                                    this.updateData(idx)
                                                 }} className={isActive} key={idx}><span>{page}</span></li>
                                             )
                                         })}
@@ -190,8 +304,8 @@ class Tables extends Component
                                         if(selected==count.length){
                                             return false
                                         }
-                                        this.getData(selected)
-                                    }} className={this.state.selected==this.state.count.length-1 ? 'next disabled' : 'next'}><span><ChevronRight/></span></li>
+                                        this.updateData(selected)
+                                    }} className={this.state.selected==this.state.pages.length-1 ? 'next disabled' : 'next'}><span><ChevronRight/></span></li>
                                 </ul>
                             </div>
                         </div>

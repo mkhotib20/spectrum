@@ -11,26 +11,20 @@ export const Persons = [
         password: '123123',
         name: "Mbak Cantik",
         img: "mbak-cantik.jpg",
-        chats: [{
-            content: 'hei'
-        }]
+        chats: []
     },
     {
         id: "z13rfjask",
         password: '123123',
         name: "Siscaee",
         img: "mbak-cantik.jpg",
-        chats: [{
-            content: 'hei'
-        }]
+        chats: []
     },
     {
         id: "sad67tgxyu",
         password: '123123',
         name: "Jihan Audi",
         img: "mbak-cantik.jpg",
-        chats: [{
-            content: 'hei'
-        }]
+        chats: []
     },
 ]

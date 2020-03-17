@@ -8,20 +8,19 @@ class Table extends Component {
     state = {
         isLoading: true, 
         data: [],
-        count: 0,
-        pageSize: 8
+        count: 0
     }
     async componentDidMount(){
-        await this.getData(0, this.state.pageSize)
+        // await this.getData(0)
     }
-    getData = async(idx, size)=>{
+    getData = async(idx, order, size)=>{
         nProgress.start()
-        let pageSize = size
+        let pageSize = 8
         let limit = pageSize
         let offset = idx*pageSize
-
+        console.log(order);        
         let model = Antrian
-        let getData = await model.get({limit: limit, offset: offset})
+        let getData = await model.get({limit: limit, offset: offset, order: order})
         if (!getData) {
             console.log(model.getErrors());
             nProgress.done()
@@ -42,22 +41,22 @@ class Table extends Component {
             nProgress.done()
         })
     }
-     changeView = async(e)=>{        
+     changeView = async(e, order)=>{        
         let pageSize = parseInt(e.target.value)
         this.setState({pageSize: pageSize, isLoading: true}, async()=>{
-            await this.getData(0, pageSize)
+            await this.getData(0, order)
         })
-        
     }
     render() {
         return (
             <Layout>
                 <div className="container-fluid mb-3">
-                    <Card>
+                    {/* <Card>
                         {this.state.isLoading ? (
                             <Skeleton count={1} height={100} />
                         ) : (
-                            <Tables 
+                            <Tables
+                                model={Antrian} 
                                 handler={{
                                     delete: (id)=>{
                                         alert(id)
@@ -67,14 +66,26 @@ class Table extends Component {
                                     }
                                 }}
                                 changeView={this.changeView}
-                                pageSize={this.state.pageSize} 
                                 count={this.state.count} getData={this.getData} 
                                 data={this.state.data} 
                                 actions={['delete', 'update']}
                                 
                             />
                         )}
-                    </Card>
+                    </Card> */}
+                            <Tables
+                                model={Antrian} 
+                                handler={{
+                                    delete: (id)=>{
+                                        alert(id)
+                                    },
+                                    update: (id) => {
+                                        alert(id)
+                                    }
+                                }}
+                                actions={['delete', 'update']}
+                                
+                            />
                 </div>
             </Layout>
         )

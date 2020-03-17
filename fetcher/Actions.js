@@ -46,10 +46,7 @@ class Actions
     }
     async get(config){        
         try {
-            const {data} = await axios.post(`${this.base_url}/get`, {
-                limit: config ? config.limit : null,
-                offset: config ? config.offset : 0
-            })
+            const {data} = await axios.post(`${this.base_url}/get`, config)
             this.response = data
             return true
         } catch (error) {

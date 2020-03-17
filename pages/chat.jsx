@@ -114,14 +114,16 @@ class ChantPage extends Component
         let {persons} = this.state
         let _room = `${user_data.id}||||${id}`
         try {
-            let chatData = await this.joinRoom(_room)
-            persons[idx].chats = chatData.map(val => {
-                return {
-                    content: val.message,
-                    incoming: user_data.id!=val.user_id_sender,
-                    isSent: true
-                }
-            })
+            let chatData = await this.joinRoom(_room)            
+            if (chatData!=null) {
+                persons[idx].chats = chatData.map(val => {
+                    return {
+                        content: val.message,
+                        incoming: user_data.id!=val.user_id_sender,
+                        isSent: true
+                    }
+                })
+            }
             this.setState({
                 persons: persons,
                 room: _room,
