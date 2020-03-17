@@ -103,15 +103,10 @@ class Tables extends Component
                 orderBy: selectedFilter,
                 type: 'ASC'
             }
-            let counter = []
-            for (let i = 0; i < count; i++) {
-                if (i%this.state.pageSize==0) {
-                    counter.push(i)
-                }
-            }
             this.setState({
                 data: data,
-                pages: counter,
+                pages: this.createPages(count),
+                dataCount: count,
                 headers: headers,
                 filterType: ['ASC', 'DESC'],
                 primaryKey: primaryKey,
@@ -120,6 +115,15 @@ class Tables extends Component
         } catch (error) {
             console.log(error);
         }
+    }
+    createPages = (count)=>{
+        let counter = []
+        for (let i = 0; i < count; i++) {
+            if (i%this.state.pageSize==0) {
+                counter.push(i)
+            }
+        }
+        return counter
     }
     updateData = async (idx) => {
         this.setState({
@@ -141,8 +145,8 @@ class Tables extends Component
             pageSize: parseInt(e.target.value)
         }, async()=>{
             try {
-                let {data} = await this.getData()
-                this.setState({data: data})
+                let {data, count} = await this.getData()
+                this.setState({data: data, pages: this.createPages(count)})
             } catch (error) {
                 console.log(error);
                 
@@ -165,29 +169,32 @@ class Tables extends Component
                             <option value="20">20</option>
                         </select>
                     </div>
-                    <div className="col-md-5">
-                        <small>Urutkan </small>
-                        <select onChange={(e)=>{this.changeOrder(e, 'orderBy')}} value={this.state.selectedFilter.orderBy}>
-                                <option value={'createdAt'}>{'createdAt'}</option>
-                            
-                            {this.state.headers.map((val, idx) => {
-                                if(val==this.state.primaryKey) return false
-                                return(
-                                    <option key={idx} value={val}>{val}</option>
-                                )
-                            })}
+                    {this.props.filter==false ? false : (
+                        <div className="col-md-5">
+                            <small>Urutkan </small>
+                            <select onChange={(e)=>{this.changeOrder(e, 'orderBy')}} value={this.state.selectedFilter.orderBy}>
+                                    <option value={'createdAt'}>{'createdAt'}</option>
+                                
+                                {this.state.headers.map((val, idx) => {
+                                    if(val==this.state.primaryKey) return false
+                                    return(
+                                        <option key={idx} value={val}>{val}</option>
+                                    )
+                                })}
 
-                        </select>
-                        <small>  </small>
-                        <select onChange={(e)=>{this.changeOrder(e, 'type')}} value={this.state.selectedFilter.type}>
-                            {this.state.filterType.map((val, idx) => {
-                                return(
-                                    <option key={idx} value={val}>{val}</option>
-                                )
-                            })}
+                            </select>
+                            <small>  </small>
+                            <select onChange={(e)=>{this.changeOrder(e, 'type')}} value={this.state.selectedFilter.type}>
+                                {this.state.filterType.map((val, idx) => {
+                                    return(
+                                        <option key={idx} value={val}>{val}</option>
+                                    )
+                                })}
 
-                        </select>
-                    </div>
+                            </select>
+                        </div>
+                    
+                    )}
                     <div className="col-md-3">
                     </div>
                 </div>
@@ -274,9 +281,9 @@ class Tables extends Component
                         <div className="col-md-3">
                             <small className="page-indicators">Showing {
                                 (this.state.selected+1)*(this.state.pageSize) > 
-                                this.state.pages ? this.state.pages : 
+                                this.state.dataCount ? this.state.dataCount : 
                                 (this.state.selected+1)*(this.state.pageSize)
-                            } of {this.state.pages} data </small>
+                            } of {this.state.dataCount} data </small>
                         </div>
                         <div className="col-md-9">
                             <div className="paginating-container pagination-solid float-right">
@@ -299,9 +306,9 @@ class Tables extends Component
                                             )
                                         })}
                                     <li onClick={()=>{
-                                        let {selected, count} = this.state
+                                        let {selected, pages} = this.state
                                         selected++
-                                        if(selected==count.length){
+                                        if(selected==pages.length){
                                             return false
                                         }
                                         this.updateData(selected)
