@@ -10,15 +10,7 @@ class Table extends Component {
             <Layout>
                 <div className="container-fluid mb-3">
                     <Tables
-                        model={Antrian} 
-                        handler={{
-                            delete: (id)=>{
-                                alert(id)
-                            },
-                            update: (id) => {
-                                alert(id)
-                            }
-                        }}
+                        model={Antrian}
                         actions={['delete', 'update']}
                     />
                 </div>

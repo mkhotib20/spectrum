@@ -1,6 +1,7 @@
 import { Component } from "react";
 import { Edit, ChevronsLeft, ChevronsRight, ChevronLeft, ChevronRight, Circle, Edit3, Edit2, Trash2 } from "react-feather";
 import {StringHelpers, DropdownMaker} from '~/helpers'
+import nProgress from "nprogress";
 const Icons = ({type, handler}) => {
     let RenderIcon
     switch (type) {
@@ -59,6 +60,7 @@ class Tables extends Component
     
     getData = async()=>{
         return new Promise(async(res, rej) => {
+            nProgress.start()
             let idx = this.state.selected
             let pageSize = this.state.pageSize
             let limit = pageSize
@@ -70,6 +72,7 @@ class Tables extends Component
             let getData = await model.get({limit: limit, offset: offset, order: order})
             if (!getData) {
                 console.log(model.getErrors());
+                nProgress.done()
                 rej(false)
                 return false
             }        
@@ -84,6 +87,7 @@ class Tables extends Component
                 count: model.getCount(),
                 data: tmp,
             })
+            nProgress.done()
         })
     }
     async componentDidMount(){
@@ -152,6 +156,19 @@ class Tables extends Component
                 
             }
         })
+    }
+    handler = async(id, type)=>{
+        switch (type) {
+            case 'delete':
+                alert('hapus '+ id)
+                break;
+        
+            case 'update':
+                alert('edit '+ id)
+                break;
+            default:
+                break;
+        }
     }
     render() {
         
@@ -255,7 +272,7 @@ class Tables extends Component
                                                         if(this.props.actionTemplate[val2]){
                                                             let Tmp = this.props.actionTemplate[val2]
                                                             return <span onClick={()=>{
-                                                                    this.props.handler[val2](val.id)
+                                                                    this.handler(val[this.state.primaryKey], val2)
                                                                 }} className="form-actions">
                                                                 <Tmp key={val.id} />
                                                             </span>
@@ -263,7 +280,7 @@ class Tables extends Component
                                                     }
                                                     return(
                                                         <Icons handler={()=>{
-                                                            this.props.handler[val2](val.id)
+                                                            this.handler(val[this.state.primaryKey], val2)
                                                         }} key={idx} type={val2}/>
                                                     )
                                                 })}
