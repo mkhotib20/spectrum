@@ -19,22 +19,18 @@ class Sidebar extends Component
                 // child: [1,2,3]
             },
             {
-                label: "Component",
+                label: "Antrian",
                 url: "#",
                 icon: Box,
                 child: [
                     {
-                        label: "Tables",
-                        url: "/table",
+                        label: "All Antrian",
+                        url: "/antrian",
                     },
                     {
-                        label: "Form Input",
-                        url: "/form-input",
+                        label: "Add New",
+                        url: "/antrian/new",
                     },
-                    // {
-                    //     label: "Scrum Board",
-                    //     url: "/scrumboard",
-                    // },
                 ]
             }
         ]

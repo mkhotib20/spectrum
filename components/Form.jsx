@@ -14,9 +14,11 @@ class FormInput extends Component
             try {
                 let errors = {}
                 Object.keys(this.props.attributes).map(key => {
-                    if (this.props.types[key]=='boolean') return false 
-                    if (this.props.types[key]=='dropdown') {
-                        data[key] = !data[key] ? '' : data[key]
+                    if (this.props.types) {
+                        if (this.props.types[key]=='boolean') return false 
+                        if (this.props.types[key]=='dropdown') {
+                            data[key] = !data[key] ? '' : data[key]
+                        }
                     }
                     if (data[key] == '') {
                         errors[key] = 'please fill this field'
@@ -44,14 +46,12 @@ class FormInput extends Component
         if (!this.props.multipart) {
             data = this.serializer(formData)
         }
-        
         await this.validateInput(data)
         if (Object.keys(this.state.errors).length>0) {
             nProgress.done()
             return false
         }
         this.props.onSubmit(e, data)
-        this.resetValue()
         nProgress.done()
     }
     serializer = (fd) => {
@@ -64,8 +64,10 @@ class FormInput extends Component
     componentDidMount(){
         let {attributes} = this.props
         Object.keys(attributes).map(key => {
-            if (this.props.types[key]=='dropdown') {
-                attributes[key] = attributes[key]== '' ? 0 : attributes[key] 
+            if (this.props.types) {
+                if (this.props.types[key]=='dropdown') {
+                    attributes[key] = attributes[key]== '' ? 0 : attributes[key] 
+                }
             }
             this.refs[key].value = attributes[key]
         })
@@ -87,10 +89,18 @@ class FormInput extends Component
                             if(this.props.hasOwnProperty(key)){
                                 selection = this.props[key]
                             }
+                            if(this.props.types){
+                                return(
+                                    <InputField isErrors={this.state.errors[key]} key={idx} selection={selection} ref={key} 
+                                    checked={this.props.types[key]=="boolean" ? this.props.attributes[key] : false}
+                                    type={this.props.types[key]} 
+                                    name={key} 
+                                    label={StringHelpers.snakeToCamel(key)} />
+                                )
+                            }
+                            
                             return(
-                                <InputField isErrors={this.state.errors[key]} key={idx} selection={selection} ref={key} 
-                                checked={this.props.types[key]=="boolean" ? this.props.attributes[key] : false}
-                                type={this.props.types[key]} 
+                                <InputField isErrors={this.state.errors[key]} key={idx} ref={key}
                                 name={key} 
                                 label={StringHelpers.snakeToCamel(key)} />
                             )

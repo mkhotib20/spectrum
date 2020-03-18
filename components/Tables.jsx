@@ -28,7 +28,7 @@ class Tables extends Component
     state = {
         pageSize: 8,
         selectedFilter: {
-            orderBy: 'createdAt',
+            orderBy: 'updatedAt',
             type:'DESC'
         },
         rowHeight: 49,
@@ -271,7 +271,14 @@ class Tables extends Component
                                                     if(this.props.actionTemplate){
                                                         if(this.props.actionTemplate[val2]){
                                                             let Tmp = this.props.actionTemplate[val2]
-                                                            return <span onClick={()=>{
+                                                            return <span onClick={async()=>{
+                                                                    if(this.props.handler){
+                                                                        if(this.props.handler[val2]){
+                                                                            await this.props.handler(val[this.state.primaryKey])
+                                                                            this.getData()
+                                                                            return false
+                                                                        }
+                                                                    }
                                                                     this.handler(val[this.state.primaryKey], val2)
                                                                 }} className="form-actions">
                                                                 <Tmp key={val.id} />
@@ -279,7 +286,14 @@ class Tables extends Component
                                                         }
                                                     }
                                                     return(
-                                                        <Icons handler={()=>{
+                                                        <Icons handler={async()=>{
+                                                            if(this.props.handler){
+                                                                if(this.props.handler[val2]){
+                                                                    await this.props.handler[val2](val[this.state.primaryKey])
+                                                                    this.getData()
+                                                                    return false
+                                                                }
+                                                            }
                                                             this.handler(val[this.state.primaryKey], val2)
                                                         }} key={idx} type={val2}/>
                                                     )

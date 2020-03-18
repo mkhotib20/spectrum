@@ -15,7 +15,7 @@ class Actions
     async getAttributes(useTimeStamp, usePk){
         
         try {
-            const {data} = await axios.get(`${this.base_url}/attr`)
+            const {data} = await axios.get(`${this.base_url}/get/attr`)
             let attr = data.data
             if (!useTimeStamp) {
                 attr = attr.filter(val => {
@@ -54,7 +54,33 @@ class Actions
             this.response = rsp
             return false
         }
+        
+        // let cof = {
+        //     offset: config.offset.toString(),
+        //     limit: config.limit.toString(),
+        //     orderBy: `${config.order.orderBy} ${config.order.type}`
+        // }
+        // try {
+        //     const data = await axios.post(`${this.base_url}`, cof)
+        //     console.log(data, cof);
+
+        //     this.response = data
+        // } catch (error) {
+        //     console.log(error);
+        // }
+        // return true
     } 
+    async getById(id){ 
+        try {
+            const {data} = await axios.get(`${this.base_url}/${id}`)
+            this.response = data
+            return true
+        } catch (error) {
+            let rsp = error.response.data || error
+            this.response = rsp
+            return false
+        }
+    }
     async insert(toBeInserted){
         try {
             const {data} = await axios.post(this.base_url, toBeInserted)
@@ -66,6 +92,36 @@ class Actions
             return false
         }
     }    
+    async update(id, toBeUpdated){
+        try {
+            const {data} = await axios.put(this.base_url, {
+                key: id,
+                toBeUpdated: toBeUpdated
+            })
+            this.response = data
+            return true
+        } catch (error) {
+            let rsp = error.response.data
+            this.response = rsp
+            return false
+        }
+    }    
+    async softDelete(id, toBeUpdated){
+        try {
+            const {data} = await axios.put(this.base_url, {
+                key: id,
+                toBeUpdated: {
+                    status: 0
+                }
+            })
+            this.response = data
+            return true
+        } catch (error) {
+            let rsp = error.response.data
+            this.response = rsp
+            return false
+        }
+    }   
 }
 
 export default Actions

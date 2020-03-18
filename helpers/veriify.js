@@ -1,5 +1,6 @@
 import { Component } from "react";
 import nextCookies from 'next-cookies'
+import {withRouter} from "next/router";
 
 export default async(WrappedComponent, accessGroup) => {
     class Wrapper extends Component
@@ -12,10 +13,11 @@ export default async(WrappedComponent, accessGroup) => {
         
         static async getInitialProps(ctx){
             let {user_data} = nextCookies(ctx)
+            let {query} = ctx
             const componentProps = WrappedComponent.getInitialProps &&
             (await WrappedComponent.getInitialProps(ctx))
-            return {...componentProps, user_data}
+            return {...componentProps, user_data, query}
         }
     }
-    return Wrapper
+    return withRouter(Wrapper)
 }
